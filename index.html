@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+    <div id="form_container">
+        <div class="mb-3">
+            <label class="form-label">ID:</label><input class="p-1 m-2" type="text" id="id"/><br>
+            <label class="form-label" >FirstName:</label><input type="text" class="p-1 m-2" name = "firstName" id="firstName"/><br>
+            <label class="form-label" >LastName:</label><input type="text" class="p-1 m-2" name = "lastName" id="lastName"/><br>
+        </div>
+        <input id="save" class="m-2 btn btn-success" type="button" value="save"/>
+        <input id="getData" class="m-2 btn btn-success" type="button" value="getData"/>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {getDatabase, ref, child, get, set, update, remove} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        const firebaseConfig = {
+          apiKey: "AIzaSyCwJMJKfYs3pg6TKTRlFR5wvNn0ySxq_bM",
+          authDomain: "wrud-9476f.firebaseapp.com",
+          projectId: "wrud-9476f",
+          storageBucket: "wrud-9476f.appspot.com",
+          messagingSenderId: "547648238509",
+          appId: "1:547648238509:web:39eb7519d3966c29fee724"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        
+        let id = document.getElementById("id");
+        let fName = document.getElementById("firstName");
+        let lName = document.getElementById("lastName");
+        let saveButton = document.getElementById("save");
+        let getDataButton = document.getElementById("getData")
+
+        function addData(){
+            set(ref(db, "User/"+id.value), {
+                FirstName : fName.value,
+                LastName : lName.value
+            }).then(()=>{
+                alert("data added successfully!");
+            }).catch((error)=>{
+                alert("not added successfully!");
+                console.log(error);
+            })
+        }
+
+        function getData(){
+            const dbRef = ref(db, "User");
+            console.log("The data base is "+dbRef);
+
+            get(dbRef).then((snapshot) => {
+                if(snapshot.exists()){
+                    snapshot.forEach((childSnapshot)=>{
+                        console.log(childSnapshot.val());
+                    })
+                }else{
+                    console.log("doesn't exist");
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching users:", error);
+            });
+            }
+
+        saveButton.addEventListener("click", addData);
+        getDataButton.addEventListener("click", getData);
+
+      </script>
+</body>
+</html>
